@@ -65,6 +65,12 @@ elseif(OS_IS_MAC)
 
     set(MACOSX_BUNDLE_GUI_IDENTIFIER ${MUSE_APP_GUI_IDENTIFIER})
     set(MACOSX_BUNDLE_BUNDLE_NAME ${MUSE_APP_TITLE})
+    if (MUSE_APP_UNSTABLE)
+        # Keep development builds apart from an installed release in macOS
+        # (Launch Services, saved window state, privacy permissions, Dock name)
+        set(MACOSX_BUNDLE_GUI_IDENTIFIER "${MUSE_APP_GUI_IDENTIFIER}.dev")
+        set(MACOSX_BUNDLE_BUNDLE_NAME "${MUSE_APP_TITLE} Dev")
+    endif()
     set(MACOSX_BUNDLE_LONG_VERSION_STRING ${MUSE_APP_VERSION})
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${MUSE_APP_VERSION})
     set(MACOSX_BUNDLE_BUNDLE_VERSION ${CMAKE_BUILD_NUMBER})
