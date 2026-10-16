@@ -22,6 +22,8 @@
 #include "mainwindowtitleprovider.h"
 #include "translation.h"
 
+#include "global/internal/baseapplication.h"
+
 using namespace mu::appshell;
 
 MainWindowTitleProvider::MainWindowTitleProvider(QObject* parent)
@@ -67,12 +69,17 @@ bool MainWindowTitleProvider::fileModified() const
 
 void MainWindowTitleProvider::setTitle(const QString& title)
 {
-    if (title == m_title) {
+    // Mark development builds so they can't be mistaken for the installed app
+    const QString fullTitle = muse::BaseApplication::appUnstable()
+                              ? title + QStringLiteral(" — Development Build")
+                              : title;
+
+    if (fullTitle == m_title) {
         return;
     }
 
-    m_title = title;
-    emit titleChanged(title);
+    m_title = fullTitle;
+    emit titleChanged(fullTitle);
 }
 
 void MainWindowTitleProvider::setFilePath(const QString& filePath)
