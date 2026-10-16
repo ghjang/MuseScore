@@ -335,7 +335,7 @@ void StartupScenario::openScore(const project::ProjectFile& file)
 }
 
 //! NOTE Runs extensions given with --run-extension, e.g.
-//! musescore://extensions/v1/workspace-watch/workspace-watch.qml
+//! musescore://extensions/v1/live-reload/live-reload.qml
 //! The "main" action is used unless the uri has an action param.
 //! Goes through the dispatcher, so a disabled extension asks to be enabled first.
 void StartupScenario::runStartupExtensions()
