@@ -61,9 +61,9 @@ Score* EngravingPluginAPIHelper::readScore(const QString& name)
     return nullptr;
 }
 
-void EngravingPluginAPIHelper::closeScore()
+bool EngravingPluginAPIHelper::closeScore(bool askToSave)
 {
-    projectFilesController()->closeOpenedProject();
+    return projectFilesController()->closeOpenedProject(true, askToSave);
 }
 
 std::optional<INotationWriter::UnitType> EngravingPluginAPIHelper::determineWriterUnitType(const std::string& ext) const

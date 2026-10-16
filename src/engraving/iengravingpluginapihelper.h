@@ -36,6 +36,6 @@ public:
 
     virtual bool writeScore(const QString& name, const QString& ext) = 0;
     virtual Score* readScore(const QString& name) = 0;
-    virtual void closeScore() = 0;
+    virtual bool closeScore(bool askToSave = true) = 0;
 };
 }

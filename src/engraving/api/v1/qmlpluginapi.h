@@ -537,6 +537,8 @@ public:
     Q_INVOKABLE apiv1::Score* readScore(const QString& name, bool noninteractive = false);
     Q_INVOKABLE void closeScore(apiv1::Score* score);
     Q_INVOKABLE void closeScore();
+    Q_INVOKABLE bool closeScoreWithoutSaving(apiv1::Score* score);
+    Q_INVOKABLE bool closeScoreWithoutSaving();
 
     Q_INVOKABLE void log(const QString&);
     Q_INVOKABLE void logn(const QString&);
@@ -591,6 +593,7 @@ public:
 
 private:
     mu::engraving::Score* currentScore() const;
+    bool closeScore(apiv1::Score* score, bool askToSave);
 
     muse::api::IApiEngine* m_engine = nullptr;
     QString m_pluginType;

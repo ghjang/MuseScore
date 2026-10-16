@@ -691,7 +691,7 @@ void ProjectActionsController::newProject()
     });
 }
 
-bool ProjectActionsController::closeOpenedProject(bool goToHome)
+bool ProjectActionsController::closeOpenedProject(bool goToHome, bool askToSave)
 {
     if (m_isProjectClosing) {
         return false;
@@ -717,7 +717,7 @@ bool ProjectActionsController::closeOpenedProject(bool goToHome)
 
     bool result = true;
 
-    if (project->needSave().val) {
+    if (askToSave && project->needSave().val) {
         IInteractive::Button btn = askAboutSavingScore(project);
 
         if (btn == IInteractive::Button::Cancel) {

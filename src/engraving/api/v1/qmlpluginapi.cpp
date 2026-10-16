@@ -325,17 +325,39 @@ void PluginAPI::closeScore()
 
 void PluginAPI::closeScore(apiv1::Score* score)
 {
+    closeScore(score, /*askToSave*/ true);
+}
+
+//---------------------------------------------------------
+//   closeScoreWithoutSaving
+///   Closes the score without asking whether to save it.
+///   Unsaved changes are lost.
+///   \returns \p true if the score was closed.
+//---------------------------------------------------------
+
+bool PluginAPI::closeScoreWithoutSaving()
+{
+    return closeScoreWithoutSaving(curScore());
+}
+
+bool PluginAPI::closeScoreWithoutSaving(apiv1::Score* score)
+{
+    return closeScore(score, /*askToSave*/ false);
+}
+
+bool PluginAPI::closeScore(apiv1::Score* score, bool askToSave)
+{
     if (!score || !score->score()) {
         LOGW() << "No score provided";
-        return;
+        return false;
     }
 
     if (score->score() != currentScore()) {
         LOGW() << "Only closing the selected score is currently supported";
-        return;
+        return false;
     }
 
-    helper()->closeScore();
+    return helper()->closeScore(askToSave);
 }
 
 //---------------------------------------------------------
