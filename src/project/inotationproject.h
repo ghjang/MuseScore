@@ -65,6 +65,10 @@ public:
     virtual muse::ValNt<bool> needSave() const = 0;
     virtual muse::Ret canSave() const = 0;
 
+    //! NOTE Close without asking to save, e.g. when the score only shows a file that is edited elsewhere
+    virtual bool discardChangesOnClose() const = 0;
+    virtual void setDiscardChangesOnClose(bool discard) = 0;
+
     virtual bool needAutoSave() const = 0;
     virtual void setNeedAutoSave(bool val) = 0;
 

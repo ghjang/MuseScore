@@ -542,6 +542,7 @@ public:
     Q_INVOKABLE bool closeScoreWithoutSaving(apiv1::Score* score);
     Q_INVOKABLE bool closeScoreWithoutSaving();
     Q_INVOKABLE void setMenuChecked(bool checked);
+    Q_INVOKABLE bool setDiscardChangesOnClose(apiv1::Score* score, bool discard);
 
     Q_INVOKABLE void log(const QString&);
     Q_INVOKABLE void logn(const QString&);

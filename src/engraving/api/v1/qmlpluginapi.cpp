@@ -365,6 +365,30 @@ void PluginAPI::setMenuChecked(bool checked)
     extensionsProvider()->setActionChecked(muse::io::path_t(ctx->baseUrl().toLocalFile()), checked);
 }
 
+//---------------------------------------------------------
+//   setDiscardChangesOnClose
+///   When \p discard is true, closing the score (File > Close,
+///   closing the window, quitting) no longer asks whether to
+///   save it: unsaved changes are lost. For scores that only
+///   show a file edited elsewhere.
+///   \returns \p true if the setting was applied.
+//---------------------------------------------------------
+
+bool PluginAPI::setDiscardChangesOnClose(apiv1::Score* score, bool discard)
+{
+    if (!score || !score->score()) {
+        LOGW() << "No score provided";
+        return false;
+    }
+
+    if (score->score() != currentScore()) {
+        LOGW() << "Only the selected score is currently supported";
+        return false;
+    }
+
+    return helper()->setDiscardChangesOnClose(discard);
+}
+
 bool PluginAPI::closeScore(apiv1::Score* score, bool askToSave)
 {
     if (!score || !score->score()) {

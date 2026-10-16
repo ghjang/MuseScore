@@ -97,6 +97,9 @@ public:
     muse::ValNt<bool> needSave() const override;
     muse::Ret canSave() const override;
 
+    bool discardChangesOnClose() const override { return m_discardChangesOnClose; }
+    void setDiscardChangesOnClose(bool discard) override { m_discardChangesOnClose = discard; }
+
     bool needAutoSave() const override;
     void setNeedAutoSave(bool val) override;
 
@@ -155,6 +158,7 @@ private:
     bool m_isImported = false;
     bool m_needSave = false;
     bool m_needAutoSave = false;
+    bool m_discardChangesOnClose = false;
     bool m_hasNonUndoStackChanges = false;
 };
 }

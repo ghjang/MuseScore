@@ -45,6 +45,7 @@ public:
     bool writeScore(const QString& name, const QString& ext) override;
     engraving::Score* readScore(const QString& name) override;
     bool closeScore(bool askToSave = true) override;
+    bool setDiscardChangesOnClose(bool discard) override;
 
 private:
     std::optional<INotationWriter::UnitType> determineWriterUnitType(const std::string& ext) const;

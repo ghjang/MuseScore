@@ -717,7 +717,7 @@ bool ProjectActionsController::closeOpenedProject(bool goToHome, bool askToSave)
 
     bool result = true;
 
-    if (askToSave && project->needSave().val) {
+    if (askToSave && !project->discardChangesOnClose() && project->needSave().val) {
         IInteractive::Button btn = askAboutSavingScore(project);
 
         if (btn == IInteractive::Button::Cancel) {

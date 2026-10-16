@@ -66,6 +66,17 @@ bool EngravingPluginAPIHelper::closeScore(bool askToSave)
     return projectFilesController()->closeOpenedProject(true, askToSave);
 }
 
+bool EngravingPluginAPIHelper::setDiscardChangesOnClose(bool discard)
+{
+    INotationProjectPtr project = globalContext()->currentProject();
+    if (!project) {
+        return false;
+    }
+
+    project->setDiscardChangesOnClose(discard);
+    return true;
+}
+
 std::optional<INotationWriter::UnitType> EngravingPluginAPIHelper::determineWriterUnitType(const std::string& ext) const
 {
     const INotationWriterPtr writer = writers()->writer(ext);
