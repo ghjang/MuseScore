@@ -34,6 +34,7 @@ static const muse::UriQuery SHOW_APIDUMP_URI("muse://extensions/apidump?modal=fa
 void ExtensionsActionController::init()
 {
     m_uiActions = std::make_shared<ExtensionsUiActions>(iocContext());
+    m_uiActions->init();
 
     provider()->manifestListChanged().onNotify(this, [this](){
         registerExtensions();

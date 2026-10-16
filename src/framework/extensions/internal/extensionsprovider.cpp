@@ -248,3 +248,45 @@ void ExtensionsProvider::performPointAsync(const ExecPointName& name)
         performPoint(name);
     });
 }
+
+void ExtensionsProvider::setActionChecked(const io::path_t& actionPath, bool checked)
+{
+    for (const Manifest& m : manifestList()) {
+        for (const Action& a : m.actions) {
+            if (a.path != actionPath) {
+                continue;
+            }
+
+            if (!a.checkable) {
+                LOGW() << "action is not checkable: " << actionPath;
+                return;
+            }
+
+            const actions::ActionCode code = makeActionCode(m.uri, a.code);
+            if (checked == muse::contains(m_checkedActions, code)) {
+                return;
+            }
+
+            if (checked) {
+                m_checkedActions.insert(code);
+            } else {
+                m_checkedActions.erase(code);
+            }
+
+            m_actionCheckedChanged.send(code);
+            return;
+        }
+    }
+
+    LOGW() << "not found action with path: " << actionPath;
+}
+
+bool ExtensionsProvider::actionChecked(const actions::ActionCode& code) const
+{
+    return muse::contains(m_checkedActions, code);
+}
+
+muse::async::Channel<muse::actions::ActionCode> ExtensionsProvider::actionCheckedChanged() const
+{
+    return m_actionCheckedChanged;
+}

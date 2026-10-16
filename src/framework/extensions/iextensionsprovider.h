@@ -56,5 +56,11 @@ public:
     virtual std::vector<ExecPoint> execPoints(const Uri& uri) const = 0;
     virtual Ret performPoint(const ExecPointName& name) = 0;
     virtual void performPointAsync(const ExecPointName& name) = 0;
+
+    //! NOTE Check mark of a checkable action's menu item (Action::checkable).
+    //! The action is found by its file path (Action::path)
+    virtual void setActionChecked(const io::path_t& actionPath, bool checked) = 0;
+    virtual bool actionChecked(const actions::ActionCode& code) const = 0;
+    virtual async::Channel<actions::ActionCode> actionCheckedChanged() const = 0;
 };
 }

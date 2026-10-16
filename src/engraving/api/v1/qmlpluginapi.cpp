@@ -22,6 +22,8 @@
 
 #include "qmlpluginapi.h"
 
+#include <QQmlContext>
+
 #include <QQmlEngine>
 #include <QJSValueIterator>
 
@@ -343,6 +345,24 @@ bool PluginAPI::closeScoreWithoutSaving()
 bool PluginAPI::closeScoreWithoutSaving(apiv1::Score* score)
 {
     return closeScore(score, /*askToSave*/ false);
+}
+
+//---------------------------------------------------------
+//   setMenuChecked
+///   Shows or hides a check mark on this plugin's menu item.
+///   The plugin must declare `property bool menuCheckable: true`
+///   among its top-level properties.
+//---------------------------------------------------------
+
+void PluginAPI::setMenuChecked(bool checked)
+{
+    const QQmlContext* ctx = qmlContext(this);
+    if (!ctx) {
+        LOGW() << "No QML context";
+        return;
+    }
+
+    extensionsProvider()->setActionChecked(muse::io::path_t(ctx->baseUrl().toLocalFile()), checked);
 }
 
 bool PluginAPI::closeScore(apiv1::Score* score, bool askToSave)

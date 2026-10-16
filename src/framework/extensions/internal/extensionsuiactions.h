@@ -37,6 +37,8 @@ public:
     ExtensionsUiActions(const modularity::ContextPtr& iocCtx)
         : Contextable(iocCtx) {}
 
+    void init();
+
     const ui::UiActionList& actionsList() const override;
 
     bool actionEnabled(const ui::UiAction& action) const override;
@@ -47,6 +49,7 @@ public:
 
 private:
     mutable ui::UiActionList m_actions;
+    async::Channel<actions::ActionCodeList> m_actionCheckedChanged;
 };
 }
 

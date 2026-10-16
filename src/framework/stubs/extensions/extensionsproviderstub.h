@@ -48,5 +48,9 @@ public:
     std::vector<ExecPoint> execPoints(const Uri& uri) const override;
     Ret performPoint(const ExecPointName& name) override;
     void performPointAsync(const ExecPointName& name) override;
+
+    void setActionChecked(const io::path_t& actionPath, bool checked) override;
+    bool actionChecked(const actions::ActionCode& code) const override;
+    async::Channel<actions::ActionCode> actionCheckedChanged() const override;
 };
 }

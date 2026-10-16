@@ -94,3 +94,18 @@ Ret ExtensionsProviderStub::performPoint(const ExecPointName&)
 void ExtensionsProviderStub::performPointAsync(const ExecPointName&)
 {
 }
+
+void ExtensionsProviderStub::setActionChecked(const io::path_t&, bool)
+{
+}
+
+bool ExtensionsProviderStub::actionChecked(const actions::ActionCode&) const
+{
+    return false;
+}
+
+async::Channel<actions::ActionCode> ExtensionsProviderStub::actionCheckedChanged() const
+{
+    static async::Channel<actions::ActionCode> ch;
+    return ch;
+}

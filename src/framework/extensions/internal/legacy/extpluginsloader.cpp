@@ -182,7 +182,8 @@ Manifest ExtPluginsLoader::parseManifest(const io::path_t& rootPath, const io::p
     };
 
     String uiCtx = DEFAULT_UI_CONTEXT;
-    int needProperties = 7; // title, description, pluginType, category, thumbnail, requiresScore, version
+    bool menuCheckable = false;
+    int needProperties = 8; // title, description, pluginType, category, thumbnail, requiresScore, version, menuCheckable
     int propertiesFound = 0;
     bool insideMuseScoreItem = false;
     size_t current, previous = 0;
@@ -255,6 +256,10 @@ Manifest ExtPluginsLoader::parseManifest(const io::path_t& rootPath, const io::p
         } else if (line.startsWith(u"version:")) {
             m.version = dropQuotes(line.mid(8).trimmed());
             ++propertiesFound;
+        } else if (line.startsWith(u"property bool menuCheckable:")) {
+            //! NOTE A declared (not built-in) property, so the plugin still loads in builds without this feature
+            menuCheckable = dropQuotes(line.mid(28).trimmed()) == u"true";
+            ++propertiesFound;
         }
 
         if (propertiesFound == needProperties) {
@@ -276,6 +281,7 @@ Manifest ExtPluginsLoader::parseManifest(const io::path_t& rootPath, const io::p
     a.uiCtx = uiCtx;
     a.apiversion = m.apiversion;
     a.legacyPlugin = m.legacyPlugin;
+    a.checkable = menuCheckable;
     a.path = fi.fileName();
     m.actions.push_back(std::move(a));
 

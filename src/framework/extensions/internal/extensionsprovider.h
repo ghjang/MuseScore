@@ -22,6 +22,8 @@
 #ifndef MUSE_EXTENSIONS_EXTENSIONSPROVIDER_H
 #define MUSE_EXTENSIONS_EXTENSIONSPROVIDER_H
 
+#include <set>
+
 #include "global/async/asyncable.h"
 
 #include "modularity/ioc.h"
@@ -63,6 +65,10 @@ public:
     Ret performPoint(const ExecPointName& name) override;
     void performPointAsync(const ExecPointName& name) override;
 
+    void setActionChecked(const io::path_t& actionPath, bool checked) override;
+    bool actionChecked(const actions::ActionCode& code) const override;
+    async::Channel<actions::ActionCode> actionCheckedChanged() const override;
+
 private:
 
     Ret run(const Action& a);
@@ -70,6 +76,9 @@ private:
     mutable ManifestList m_manifests;
     async::Notification m_manifestListChanged;
     async::Channel<Manifest> m_manifestChanged;
+
+    std::set<actions::ActionCode> m_checkedActions;
+    async::Channel<actions::ActionCode> m_actionCheckedChanged;
 };
 }
 

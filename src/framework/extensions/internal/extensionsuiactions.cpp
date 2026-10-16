@@ -46,6 +46,13 @@ static const UiActionList STATIC_ACTIONS = {
              ),
 };
 
+void ExtensionsUiActions::init()
+{
+    provider()->actionCheckedChanged().onReceive(this, [this](const ActionCode& code) {
+        m_actionCheckedChanged.send({ code });
+    });
+}
+
 const muse::ui::UiActionList& ExtensionsUiActions::actionsList() const
 {
     UiActionList result;
@@ -65,6 +72,7 @@ const muse::ui::UiActionList& ExtensionsUiActions::actionsList() const
                                  : TranslatableString("extensions", "Run plugin %1: %2").arg(m.title, a.title);
             action.title = action.description;
             action.iconCode = a.icon;
+            action.checkable = a.checkable ? Checkable::Yes : Checkable::No;
 
             result.push_back(std::move(action));
         }
@@ -88,13 +96,12 @@ async::Channel<ActionCodeList> ExtensionsUiActions::actionEnabledChanged() const
     return ch;
 }
 
-bool ExtensionsUiActions::actionChecked(const UiAction&) const
+bool ExtensionsUiActions::actionChecked(const UiAction& action) const
 {
-    return false;
+    return provider()->actionChecked(action.code);
 }
 
 async::Channel<ActionCodeList> ExtensionsUiActions::actionCheckedChanged() const
 {
-    static async::Channel<muse::actions::ActionCodeList> ch;
-    return ch;
+    return m_actionCheckedChanged;
 }

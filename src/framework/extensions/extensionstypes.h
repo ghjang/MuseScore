@@ -147,6 +147,7 @@ struct Action {
     String func = u"main";
     int apiversion = DEFAULT_API_VERSION;
     bool legacyPlugin = false;
+    bool checkable = false; // menu item shows a check mark, see IExtensionsProvider::setActionChecked
 
     struct Config {
         ExecPointName execPoint = EXEC_DISABLED;

@@ -31,6 +31,7 @@
 #include "actions/iactionsdispatcher.h"
 #include "context/iglobalcontext.h"
 #include "global/iapplication.h"
+#include "extensions/iextensionsprovider.h"
 
 #include "../../iengravingpluginapihelper.h"
 
@@ -139,6 +140,7 @@ private:
     muse::ContextInject<mu::context::IGlobalContext> context = { this };
     muse::ContextInject<muse::IApplication> application = { this };
     muse::ContextInject<mu::engraving::IEngravingPluginAPIHelper> helper = { this };
+    muse::ContextInject<muse::extensions::IExtensionsProvider> extensionsProvider = { this };
 
 public:
     // Should be initialized in qmlpluginapi.cpp
@@ -539,6 +541,7 @@ public:
     Q_INVOKABLE void closeScore();
     Q_INVOKABLE bool closeScoreWithoutSaving(apiv1::Score* score);
     Q_INVOKABLE bool closeScoreWithoutSaving();
+    Q_INVOKABLE void setMenuChecked(bool checked);
 
     Q_INVOKABLE void log(const QString&);
     Q_INVOKABLE void logn(const QString&);
