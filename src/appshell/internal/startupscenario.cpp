@@ -104,6 +104,11 @@ void StartupScenario::setStartupScoreFile(const std::optional<project::ProjectFi
     m_startupScoreFile = file ? file.value() : project::ProjectFile();
 }
 
+void StartupScenario::setStartupExtensions(const std::vector<std::string>& uris)
+{
+    m_startupExtensions = uris;
+}
+
 void StartupScenario::runOnSplashScreen()
 {
     TRACEFUNC;
@@ -220,6 +225,8 @@ void StartupScenario::onStartupPageOpened(StartupModeType modeType)
     } break;
     }
 
+    runStartupExtensions();
+
     m_activeUpdateCheckCount = 0;
 
     if (appUpdateScenario() && appUpdateScenario()->checkInProgress()) {
@@ -325,6 +332,29 @@ void StartupScenario::checkAndShowMuseSamplerUpdateIfNeed()
 void StartupScenario::openScore(const project::ProjectFile& file)
 {
     dispatcher()->dispatch("file-open", ActionData::make_arg2<QUrl, QString>(file.url, file.displayNameOverride));
+}
+
+//! NOTE Runs extensions given with --run-extension, e.g.
+//! musescore://extensions/v1/workspace-watch/workspace-watch.qml
+//! The "main" action is used unless the uri has an action param.
+//! Goes through the dispatcher, so a disabled extension asks to be enabled first.
+void StartupScenario::runStartupExtensions()
+{
+    for (const std::string& uri : m_startupExtensions) {
+        UriQuery q(uri);
+        if (!q.isValid()) {
+            LOGE() << "invalid extension uri: " << uri;
+            continue;
+        }
+
+        if (!q.contains("action")) {
+            q.addParam("action", Val("main"));
+        }
+        q.setScheme("action");
+
+        LOGI() << "run startup extension: " << q.toString();
+        dispatcher()->dispatch(q);
+    }
 }
 
 void StartupScenario::restoreLastSession()

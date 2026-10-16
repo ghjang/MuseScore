@@ -82,6 +82,7 @@ void CommandLineParser::init()
     m_parser.addOption(QCommandLineOption({ "t", "test-mode" }, "Set test mode flag for all files")); // this includes --template-mode
 
     m_parser.addOption(QCommandLineOption("session-type", "Startup with given session type", "type")); // see StartupScenario::sessionTypeTromString
+    m_parser.addOption(QCommandLineOption("run-extension", "Run the given extension (plugin) after startup; can be repeated", "uri"));
 
     m_parser.addOption(QCommandLineOption("unroll-repeats", "Unroll repeats"));
 
@@ -280,6 +281,10 @@ void CommandLineParser::parse(int argc, char** argv)
 
     if (m_parser.isSet("session-type")) {
         m_options.startup.type = m_parser.value("session-type").toStdString();
+    }
+
+    for (const QString& uri : m_parser.values("run-extension")) {
+        m_options.startup.extensionsToRun.push_back(uri.toStdString());
     }
 
     if (m_parser.isSet("register-audio-plugin")) {

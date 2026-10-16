@@ -480,6 +480,7 @@ void GuiApp::applyCommandLineOptions(const CmdOptions& options)
     }
 
     startupScenario()->setStartupType(options.startup.type);
+    startupScenario()->setStartupExtensions(options.startup.extensionsToRun);
 
     if (options.startup.scoreUrl.has_value()) {
         project::ProjectFile file { options.startup.scoreUrl.value() };

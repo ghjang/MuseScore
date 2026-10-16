@@ -102,6 +102,7 @@ struct CmdOptions {
         std::optional<std::string> type;
         std::optional<QUrl> scoreUrl;
         std::optional<QString> scoreDisplayNameOverride;
+        std::vector<std::string> extensionsToRun;
     } startup;
 
     struct ConverterTask {

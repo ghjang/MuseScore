@@ -64,6 +64,8 @@ public:
     const project::ProjectFile& startupScoreFile() const override;
     void setStartupScoreFile(const std::optional<project::ProjectFile>& file) override;
 
+    void setStartupExtensions(const std::vector<std::string>& uris) override;
+
     void runOnSplashScreen() override;
     void runAfterSplashScreen() override;
     bool startupCompleted() const override;
@@ -80,12 +82,14 @@ private:
     bool shouldShowWelcomeDialog(StartupModeType modeType) const;
 
     void openScore(const project::ProjectFile& file);
+    void runStartupExtensions();
 
     void restoreLastSession();
     void removeProjectsUnsavedChanges(const muse::io::paths_t& projectsPaths);
 
     std::string m_startupTypeStr;
     project::ProjectFile m_startupScoreFile;
+    std::vector<std::string> m_startupExtensions;
     bool m_startupCompleted = false;
     size_t m_activeUpdateCheckCount = 0;
 };
