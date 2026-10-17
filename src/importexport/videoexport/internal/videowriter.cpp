@@ -635,8 +635,13 @@ VideoWriter::ScoreFrameResult VideoWriter::paintScoreFrame(INotationPtr notation
 {
     const Color CURSOR_COLOR = Color(2, 109, 203, 127);
 
+    const PageList pages = notation->elements()->pages();
+    if (pages.empty()) {
+        return ScoreFrameResult::NoPage;
+    }
+
     const Page* page = nullptr;
-    for (const Page* p : notation->elements()->pages()) {
+    for (const Page* p : pages) {
         if (tick < static_cast<tick_t>(p->endTick().ticks())) {
             page = p;
             break;
@@ -644,7 +649,10 @@ VideoWriter::ScoreFrameResult VideoWriter::paintScoreFrame(INotationPtr notation
     }
 
     if (!page) {
-        return ScoreFrameResult::NoPage;
+        // Past the last tick (e.g. a final fermata or the release of the last notes still sounding):
+        // keep showing the last page with the cursor at the end, so the video stays as long as the audio
+        page = pages.back();
+        tick = static_cast<tick_t>(page->endTick().ticks()) - 1;
     }
 
     if (!page->firstMeasure()) {
