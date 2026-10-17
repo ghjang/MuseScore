@@ -34,7 +34,8 @@ StyledDialogView {
     title: qsTrc("project/export", "Export")
 
     contentWidth: 756
-    contentHeight: 420
+    //! NOTE Grow when a format has more settings than fit (e.g. MP4 video)
+    contentHeight: Math.max(420, settingsColumn.implicitHeight)
     margins: 24
 
     ExportDialogModel {
@@ -115,6 +116,8 @@ StyledDialogView {
         }
 
         ColumnLayout {
+            id: settingsColumn
+
             Layout.fillWidth: true
             Layout.preferredWidth: parent.width / 2 - parent.spacing / 2
             spacing: 18
