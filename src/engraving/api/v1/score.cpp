@@ -520,6 +520,12 @@ QString Score::name() const
     return score()->masterScore()->name();
 }
 
+QString Score::path() const
+{
+    const mu::engraving::IFileInfoProviderPtr fileInfo = score()->masterScore()->fileInfo();
+    return fileInfo ? fileInfo->path().toQString() : QString();
+}
+
 void Score::setName(const QString& /*name*/)
 {
     NOT_IMPLEMENTED;

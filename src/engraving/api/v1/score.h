@@ -78,6 +78,15 @@ class Score : public apiv1::ScoreElement, public muse::Contextable
     Q_PROPERTY(QString scoreName READ name WRITE setName)
 
     /** APIDOC
+     * Absolute path of the file this score was opened from or last saved to,
+     * or an empty string if it has none (e.g. a new score that was never saved).
+     * For an imported file (e.g. MusicXML) this is the imported file.
+     * @readonly
+     * @q_property {String}
+     */
+    Q_PROPERTY(QString path READ path)
+
+    /** APIDOC
      * Title of score, as taken from the score properties `workTitle`
      * @readonly
      * @q_property {String}
@@ -367,6 +376,7 @@ public:
 
     QString name() const;
     void setName(const QString& name);
+    QString path() const;
     QString title() const { return score()->metaTag(u"workTitle"); }
     QString composer() const { return score()->metaTag(u"composer"); }
     QString lyricist() const { return score()->metaTag(u"lyricist"); }   // not the meanwhile obsolete "poet"
