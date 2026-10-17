@@ -58,6 +58,13 @@ public:
 
     virtual double trailingSec() const = 0;
     virtual void setTrailingSec(std::optional<double> trailingSec) = 0;
+
+    //! NOTE When off, the leading/trailing seconds show the score instead of the title / "Made with MuseScore" screens
+    virtual bool showTitleScreen() const = 0;
+    virtual void setShowTitleScreen(std::optional<bool> show) = 0;
+
+    virtual bool showEndScreen() const = 0;
+    virtual void setShowEndScreen(std::optional<bool> show) = 0;
 };
 }
 

@@ -83,6 +83,8 @@ class ExportDialogModel : public QAbstractListModel, public QQmlParserStatus, pu
     using ViewMode = mu::iex::videoexport::ViewMode;
     Q_ENUM(ViewMode);
     Q_PROPERTY(ViewMode viewMode READ viewMode WRITE setViewMode NOTIFY viewModeChanged FINAL)
+    Q_PROPERTY(bool videoShowTitleScreen READ videoShowTitleScreen WRITE setVideoShowTitleScreen NOTIFY videoShowTitleScreenChanged FINAL)
+    Q_PROPERTY(bool videoShowEndScreen READ videoShowEndScreen WRITE setVideoShowEndScreen NOTIFY videoShowEndScreenChanged FINAL)
 
     Q_PROPERTY(int sampleRate READ sampleRate WRITE setSampleRate NOTIFY sampleRateChanged)
     Q_PROPERTY(int bitRate READ bitRate WRITE setBitRate NOTIFY bitRateChanged)
@@ -184,6 +186,11 @@ public:
     ViewMode viewMode() const;
     void setViewMode(ViewMode v);
 
+    bool videoShowTitleScreen() const;
+    void setVideoShowTitleScreen(bool show);
+    bool videoShowEndScreen() const;
+    void setVideoShowEndScreen(bool show);
+
     Q_INVOKABLE QList<int> availableSampleRates() const;
     int sampleRate() const;
     void setSampleRate(int sampleRate);
@@ -260,6 +267,8 @@ signals:
 
     void videoResolutionChanged(const QString& resolution);
     void viewModeChanged(ViewMode v);
+    void videoShowTitleScreenChanged(bool show);
+    void videoShowEndScreenChanged(bool show);
 
     void availableSampleRatesChanged();
     void sampleRateChanged(int sampleRate);

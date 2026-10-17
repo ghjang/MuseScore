@@ -158,6 +158,8 @@ void CommandLineParser::init()
     m_parser.addOption(QCommandLineOption("ls", "Pause before playback in seconds (3.0)", "3.0"));
     m_parser.addOption(QCommandLineOption("ts", "Pause before end of video in seconds (3.0)", "3.0"));
     m_parser.addOption(QCommandLineOption("no-audio", "Export video without audio"));
+    m_parser.addOption(QCommandLineOption("no-title-screen", "Show the score instead of the title during the pause before playback"));
+    m_parser.addOption(QCommandLineOption("no-end-screen", "Show the last frame instead of \"Made with MuseScore\" during the pause at the end"));
 #endif
 
     m_parser.addOption(QCommandLineOption("gp-linked", "create tabulature linked staves for guitar pro"));
@@ -450,6 +452,14 @@ void CommandLineParser::parse(int argc, char** argv)
 
         if (m_parser.isSet("ts")) {
             m_options.exportVideo.trailingSec = doubleValue("ts");
+        }
+
+        if (m_parser.isSet("no-title-screen")) {
+            m_options.exportVideo.showTitleScreen = false;
+        }
+
+        if (m_parser.isSet("no-end-screen")) {
+            m_options.exportVideo.showEndScreen = false;
         }
 
         if (m_parser.isSet("no-audio")) {

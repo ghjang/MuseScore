@@ -405,6 +405,8 @@ void ConsoleApp::applyCommandLineOptions(const CmdOptions& options, IApplication
     videoExportConfiguration()->setFps(options.exportVideo.fps);
     videoExportConfiguration()->setLeadingSec(options.exportVideo.leadingSec);
     videoExportConfiguration()->setTrailingSec(options.exportVideo.trailingSec);
+    videoExportConfiguration()->setShowTitleScreen(options.exportVideo.showTitleScreen);
+    videoExportConfiguration()->setShowEndScreen(options.exportVideo.showEndScreen);
 #endif
 
 #ifdef MUE_BUILD_IMPEXP_MIDI_MODULE

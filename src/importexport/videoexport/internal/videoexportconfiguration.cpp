@@ -30,6 +30,8 @@ static const std::string DEFAULT_RESOLUTION = "1080p";
 static const int DEFAULT_FPS = 24;
 static const double DEFAULT_LEADING_SEC = 3.0;
 static const double DEFAULT_TRAILING_SECONDS = 3.0;
+static const bool DEFAULT_SHOW_TITLE_SCREEN = true;
+static const bool DEFAULT_SHOW_END_SCREEN = true;
 
 static const std::vector<std::string> AVAILABLE_RESOLUTIONS = { "2160p", "1440p", "1080p" };
 
@@ -106,4 +108,24 @@ double VideoExportConfiguration::trailingSec() const
 void VideoExportConfiguration::setTrailingSec(std::optional<double> trailingSec)
 {
     m_trailingSec = trailingSec;
+}
+
+bool VideoExportConfiguration::showTitleScreen() const
+{
+    return m_showTitleScreen ? m_showTitleScreen.value() : DEFAULT_SHOW_TITLE_SCREEN;
+}
+
+void VideoExportConfiguration::setShowTitleScreen(std::optional<bool> show)
+{
+    m_showTitleScreen = show;
+}
+
+bool VideoExportConfiguration::showEndScreen() const
+{
+    return m_showEndScreen ? m_showEndScreen.value() : DEFAULT_SHOW_END_SCREEN;
+}
+
+void VideoExportConfiguration::setShowEndScreen(std::optional<bool> show)
+{
+    m_showEndScreen = show;
 }

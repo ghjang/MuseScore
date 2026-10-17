@@ -656,6 +656,36 @@ ExportDialogModel::ViewMode ExportDialogModel::viewMode() const
     return videoExportConfiguration()->viewMode();
 }
 
+bool ExportDialogModel::videoShowTitleScreen() const
+{
+    return videoExportConfiguration()->showTitleScreen();
+}
+
+void ExportDialogModel::setVideoShowTitleScreen(bool show)
+{
+    if (show == videoShowTitleScreen()) {
+        return;
+    }
+
+    videoExportConfiguration()->setShowTitleScreen(show);
+    emit videoShowTitleScreenChanged(show);
+}
+
+bool ExportDialogModel::videoShowEndScreen() const
+{
+    return videoExportConfiguration()->showEndScreen();
+}
+
+void ExportDialogModel::setVideoShowEndScreen(bool show)
+{
+    if (show == videoShowEndScreen()) {
+        return;
+    }
+
+    videoExportConfiguration()->setShowEndScreen(show);
+    emit videoShowEndScreenChanged(show);
+}
+
 bool ExportDialogModel::isFFmpegAvailable() const
 {
 #ifdef MUE_BUILD_IMPEXP_VIDEOEXPORT_MODULE

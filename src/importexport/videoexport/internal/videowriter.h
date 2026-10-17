@@ -30,6 +30,7 @@
 #include "io/ifilesystem.h"
 #include "global/iapplication.h"
 #include "media/ivideoencoderresolver.h"
+#include "midi/miditypes.h"
 #include "../ivideoexportconfiguration.h"
 #include "context/iglobalcontext.h"
 
@@ -40,6 +41,10 @@ class QImage;
 
 namespace muse::draw {
 class Painter;
+}
+
+namespace mu::notation {
+class PlaybackCursor;
 }
 
 namespace mu::iex::videoexport {
@@ -75,6 +80,8 @@ private:
         int bitrate = 800000;
         float leadingSec = 3.;
         float trailingSec = 3.;
+        bool showTitleScreen = true;
+        bool showEndScreen = true;
         double canvasDpi = 300.0;
         ViewMode viewMode = ViewMode::PageFull;
         muse::PointF moveToCenter;
@@ -93,7 +100,16 @@ private:
     bool generateScoreFrames(muse::media::IVideoEncoderPtr encoder, notation::INotationPtr notation, muse::draw::Painter& painter,
                              QImage& frame, const Config& config, float totalPlayTimeSec, int leadingFrameCount, int totalFrameCount);
 
-    bool generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, const Config& config);
+    bool generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, const QImage& lastFrame, const Config& config);
+
+    enum class ScoreFrameResult {
+        Painted,
+        Skipped,  // page with no notation
+        NoPage,
+    };
+
+    ScoreFrameResult paintScoreFrame(notation::INotationPtr notation, muse::draw::Painter& painter, QImage& frame,
+                                     const Config& config, notation::PlaybackCursor& cursor, muse::midi::tick_t tick);
 
     struct ScoreRestoreData
     {

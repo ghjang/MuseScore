@@ -223,6 +223,8 @@ VideoWriter::Config VideoWriter::makeConfig() const
 
     cfg.leadingSec = configuration()->leadingSec();
     cfg.trailingSec = configuration()->trailingSec();
+    cfg.showTitleScreen = configuration()->showTitleScreen();
+    cfg.showEndScreen = configuration()->showEndScreen();
 
     cfg.viewMode = configuration()->viewMode();
 
@@ -440,7 +442,7 @@ void VideoWriter::doGenerate(muse::media::IVideoEncoderPtr encoder, INotationPtr
     }
 
     // Add "Made with MuseScore"
-    if (!generateTrailingFrames(encoder, actualConfig)) {
+    if (!generateTrailingFrames(encoder, frame, actualConfig)) {
         return;
     }
 
@@ -454,6 +456,29 @@ bool VideoWriter::generateLeadingFrames(muse::media::IVideoEncoderPtr encoder, I
 {
     int leadingFrameCount = static_cast<int>(config.leadingSec * config.fps);
     if (leadingFrameCount <= 0) {
+        return true;
+    }
+
+    if (!config.showTitleScreen) {
+        // Show the score at its start for the leading seconds instead of the title
+        PlaybackCursor cursor(iocContext());
+        cursor.setNotation(notation);
+
+        if (paintScoreFrame(notation, painter, frame, config, cursor, 0) != ScoreFrameResult::Painted) {
+            painter.fillRect(muse::RectF::fromQRectF(QRectF(frame.rect())), Color::BLACK);
+        }
+
+        for (int f = 0; f < leadingFrameCount; ++f) {
+            if (m_abort) {
+                m_writeRet = make_ret(muse::Ret::Code::Cancel);
+                m_progress.finish(m_writeRet);
+                return false;
+            }
+
+            m_progress.progress(f, totalFrameCount);
+            encoder->encodeImage(frame);
+        }
+
         return true;
     }
 
@@ -528,10 +553,19 @@ bool VideoWriter::generateLeadingFrames(muse::media::IVideoEncoderPtr encoder, I
     return true;
 }
 
-bool VideoWriter::generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, const Config& config)
+bool VideoWriter::generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, const QImage& lastFrame, const Config& config)
 {
     int trailingFrameCount = static_cast<int>(config.trailingSec * config.fps);
     if (trailingFrameCount <= 0) {
+        return true;
+    }
+
+    if (!config.showEndScreen) {
+        // Hold the last score frame for the trailing seconds instead of "Made with MuseScore"
+        for (int f = 0; f < trailingFrameCount; ++f) {
+            encoder->encodeImage(lastFrame);
+        }
+
         return true;
     }
 
@@ -560,21 +594,7 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
         return true;
     }
 
-    PageList pages = notation->elements()->pages();
-    auto painting = notation->painting();
     INotationPlaybackPtr playback = notation->masterNotation()->playback();
-    muse::RectF frameRect = muse::RectF::fromQRectF(QRectF(frame.rect()));
-
-    auto pageByTick = [](const PageList& pages, tick_t tick) -> const Page* {
-        for (const Page* p : pages) {
-            if (tick < static_cast<tick_t>(p->endTick().ticks())) {
-                return p;
-            }
-        }
-        return nullptr;
-    };
-
-    const Color CURSOR_COLOR = Color(2, 109, 203, 127);
 
     PlaybackCursor cursor(iocContext());
     cursor.setNotation(notation);
@@ -595,40 +615,64 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
 
         tick_t tick = playback->secToTick(currentTimeSec);
 
-        const Page* page = pageByTick(pages, tick);
-        if (!page) {
+        ScoreFrameResult result = paintScoreFrame(notation, painter, frame, config, cursor, tick);
+        if (result == ScoreFrameResult::NoPage) {
             break;
         }
 
-        if (!page->firstMeasure()) {
-            // Skip pages with no notation
+        if (result == ScoreFrameResult::Skipped) {
             continue;
         }
-
-        INotationPainting::Options opt;
-        opt.fromPage = static_cast<int>(page->pageNumber());
-        opt.toPage = opt.fromPage;
-        opt.deviceDpi = config.canvasDpi;
-
-        painter.fillRect(frameRect, Color::BLACK);
-
-        painter.save();
-        painter.translate(config.moveToCenter);
-
-        painting->paintPrint(&painter, opt);
-
-        cursor.move(tick);
-
-        muse::RectF cursorRect = cursor.rect();
-        muse::PointF pagePos = page->pos();
-        muse::RectF cursorAbsRect = cursorRect.translated(-pagePos);
-
-        painter.fillRect(cursorAbsRect, CURSOR_COLOR);
-
-        painter.restore();
 
         encoder->encodeImage(frame);
     }
 
     return true;
+}
+
+VideoWriter::ScoreFrameResult VideoWriter::paintScoreFrame(INotationPtr notation, Painter& painter, QImage& frame,
+                                                           const Config& config, PlaybackCursor& cursor, tick_t tick)
+{
+    const Color CURSOR_COLOR = Color(2, 109, 203, 127);
+
+    const Page* page = nullptr;
+    for (const Page* p : notation->elements()->pages()) {
+        if (tick < static_cast<tick_t>(p->endTick().ticks())) {
+            page = p;
+            break;
+        }
+    }
+
+    if (!page) {
+        return ScoreFrameResult::NoPage;
+    }
+
+    if (!page->firstMeasure()) {
+        // Skip pages with no notation
+        return ScoreFrameResult::Skipped;
+    }
+
+    INotationPainting::Options opt;
+    opt.fromPage = static_cast<int>(page->pageNumber());
+    opt.toPage = opt.fromPage;
+    opt.deviceDpi = config.canvasDpi;
+
+    painter.fillRect(muse::RectF::fromQRectF(QRectF(frame.rect())), Color::BLACK);
+
+    painter.save();
+    painter.translate(config.moveToCenter);
+
+    notation->painting()->paintPrint(&painter, opt);
+
+    cursor.move(tick);
+
+    muse::RectF cursorRect = cursor.rect();
+    muse::PointF pagePos = page->pos();
+    muse::RectF cursorAbsRect = cursorRect.translated(-pagePos);
+
+    painter.fillRect(cursorAbsRect, CURSOR_COLOR);
+
+    painter.restore();
+
+    return ScoreFrameResult::Painted;
 }

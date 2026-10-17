@@ -53,6 +53,12 @@ public:
     double trailingSec() const override;
     void setTrailingSec(std::optional<double> trailingSec) override;
 
+    bool showTitleScreen() const override;
+    void setShowTitleScreen(std::optional<bool> show) override;
+
+    bool showEndScreen() const override;
+    void setShowEndScreen(std::optional<bool> show) override;
+
 private:
     std::optional<ViewMode> m_viewMode = std::nullopt;
     std::optional<bool> m_showPiano = std::nullopt;
@@ -61,6 +67,8 @@ private:
     std::optional<int> m_fps = std::nullopt;
     std::optional<double> m_leadingSec = std::nullopt;
     std::optional<double> m_trailingSec = std::nullopt;
+    std::optional<bool> m_showTitleScreen = std::nullopt;
+    std::optional<bool> m_showEndScreen = std::nullopt;
 };
 }
 

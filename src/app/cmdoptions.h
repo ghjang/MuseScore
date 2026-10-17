@@ -77,6 +77,8 @@ struct CmdOptions {
         std::optional<int> fps;
         std::optional<double> leadingSec;
         std::optional<double> trailingSec;
+        std::optional<bool> showTitleScreen;
+        std::optional<bool> showEndScreen;
     } exportVideo;
 
     struct {

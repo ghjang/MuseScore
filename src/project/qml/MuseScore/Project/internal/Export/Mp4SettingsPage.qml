@@ -137,6 +137,8 @@ ExportSettingsPage {
             }
 
             RadioButtonGroup {
+                id: viewModeGroup
+
                 orientation: ListView.Vertical
                 spacing: 8
                 width: parent.width
@@ -157,6 +159,36 @@ ExportSettingsPage {
                     navigation.panel: root.navigationPanel
                     navigation.row: videoResolutionDropdown.navigation.row + 1 + index
                     navigation.accessible.name: modelData.text
+                }
+            }
+
+            CheckBox {
+                id: titleScreenCheckBox
+
+                width: parent.width
+                text: qsTrc("project/export", "Show title screen at the start")
+
+                navigation.name: "VideoShowTitleScreenCheckBox"
+                navigation.panel: root.navigationPanel
+                navigation.row: videoResolutionDropdown.navigation.row + 1 + viewModeGroup.count
+
+                checked: root.model ? root.model.videoShowTitleScreen : true
+                onClicked: {
+                    root.model.videoShowTitleScreen = !checked
+                }
+            }
+
+            CheckBox {
+                width: parent.width
+                text: qsTrc("project/export", "Show “Made with MuseScore” screen at the end")
+
+                navigation.name: "VideoShowEndScreenCheckBox"
+                navigation.panel: root.navigationPanel
+                navigation.row: titleScreenCheckBox.navigation.row + 1
+
+                checked: root.model ? root.model.videoShowEndScreen : true
+                onClicked: {
+                    root.model.videoShowEndScreen = !checked
                 }
             }
 
